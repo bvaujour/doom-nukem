@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 21:11:12 by injah             #+#    #+#             */
-/*   Updated: 2025/06/04 21:33:39 by injah            ###   ########.fr       */
+/*   Updated: 2025/06/06 12:21:03 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,7 @@ typedef struct	s_hotkeys
 	bool	key_d;
 	bool	key_w;
 	bool	key_z;
+	bool	key_t;
 	float	mouse_x;
 	float	mouse_y;
 }				t_hotkeys;
@@ -118,7 +119,7 @@ typedef struct s_ray
 	double		wall_height;
 	double		wall_x;
 	int			side;
-	int			line_height;
+	float		line_height;
 	int			draw_start;
 	int			draw_end;
 	int			texture_x;

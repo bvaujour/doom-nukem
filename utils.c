@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 18:55:13 by injah             #+#    #+#             */
-/*   Updated: 2025/06/04 21:48:32 by injah            ###   ########.fr       */
+/*   Updated: 2025/06/06 11:33:46 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ bool	is_out_of_map(t_map *map, int x, int y)
 float	get_wall_height(t_map *map, int x, int y)
 {
 	if (is_out_of_map(map, x, y))
-		return (5.0f);
+		return (3.0f);
 	return ((map->grid[y][x] - 48) * 0.1f);
 }
 

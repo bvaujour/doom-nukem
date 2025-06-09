@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 20:34:39 by injah             #+#    #+#             */
-/*   Updated: 2025/06/04 21:56:25 by injah            ###   ########.fr       */
+/*   Updated: 2025/06/06 13:21:22 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,7 @@ int	update_frame(t_data *data)
 
 		size_t	after_raycasting = ft_gettime_us();
 
-		post_process(data);
+		// post_process(data);
 
 		size_t	after_post_process = ft_gettime_us();
 

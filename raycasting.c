@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 09:56:19 by injah             #+#    #+#             */
-/*   Updated: 2025/06/04 21:48:51 by injah            ###   ########.fr       */
+/*   Updated: 2025/06/06 13:28:41 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ static void	init_raycasting_info(int x, t_data *data, t_ray *ray, t_player *play
 
 static void	calculate_line_height(t_data *data, t_ray *ray, t_player *player)
 {
-	int base_height;
+	float base_height;
 
 	if (ray->side == 0)
 	{
@@ -71,28 +71,33 @@ static void	calculate_line_height(t_data *data, t_ray *ray, t_player *player)
 	}
 	if (ray->wall_dist <= 0.0001)
 		ray->wall_dist = 0.0001;
-	base_height = (int)(data->screen_height / ray->wall_dist);
-	ray->line_height = base_height * (ray->wall_height * 1.0);
+	
+	base_height = data->screen_height / ray->wall_dist;
+	ray->line_height = base_height * ray->wall_height;
 
 	// draw_end = position du sol en perspective + moitié de la hauteur du mur
 	ray->draw_end = data->screen_height / 2 + player->pitch + (player->view_z / ray->wall_dist) + base_height / 2;
 	ray->draw_start = ray->draw_end - ray->line_height;
+	
 	ray->draw_end = ft_iclamp(ray->draw_end, 0, data->screen_height - 1);
 	ray->draw_start = ft_iclamp(ray->draw_start, 0, data->screen_height - 1);
+	
 }
 
-static void	calculate_wall_texture(t_data *data, t_ray *ray, t_player *player)
+static void	calculate_wall_texture(t_data *data, t_ray *ray)
 {
 	if (ray->side == 0)
-		ray->wall_x = player->position.y + ray->wall_dist * ray->dir_y;
+		ray->wall_x = data->player.position.y + ray->wall_dist * ray->dir_y;
 	else
-		ray->wall_x = player->position.x + ray->wall_dist * ray->dir_x;
+		ray->wall_x = data->player.position.x + ray->wall_dist * ray->dir_x;
 	ray->wall_x -= floor(ray->wall_x);
 	ray->texture_x = (int)(ray->wall_x * data->wall.width);			//Coordonnée horizontale du pixel dans la texture (inversion si nécessaire selon la direction).
 	if (ray->wall_card == WEST || ray->wall_card == SOUTH)
 		ray->texture_x =  data->wall.width - ray->texture_x - 1;
 	ray->texture_step = 1.0 * data->wall.height / ray->line_height;	//Préparation de l’échantillonnage vertical : combien de pixels sauter à chaque ligne pour parcourir la texture.
-	ray->texture_pos = (ray->draw_start - data->player.pitch  - (data->player.view_z / ray->wall_dist) - data->screen_height / 2 + ray->line_height / 2) * ray->texture_step;
+	float offset = ray->draw_start - data->player.pitch - (data->player.view_z / ray->wall_dist);
+	float center_offset = offset - data->screen_height / 2 + ray->line_height / 2;
+	ray->texture_pos = center_offset * ray->texture_step;
 }
 
 static void	calculate_plateform(t_data *data, t_ray *ray)
@@ -115,54 +120,7 @@ static void	calculate_plateform(t_data *data, t_ray *ray)
 	ray->platform_start = clone.draw_start;
 }
 
-// static void	draw_floor(t_data *data, t_ray *ray, int x)
-// {
-// 	int				y;
-// 	int				index;
-// 	int				i;
-// 	unsigned int	color;
-// 	const int 		horizon = data->screen_half_height + data->player.pitch;
-// 	const float 	rayDirX = ray->dir_x;
-// 	const float 	rayDirY = ray->dir_y;
-// 	const float		dist_step = (ray->platform_begin_dist - ray->wall_dist) / (ray->draw_start - ray->platform_start);
-// 	const float		camZ = (0.5f - ray->wall_height) * data->screen_height +  data->player.view_z;
-	
-// 	i = 1;
-// 	y = ray->platform_start - 1;
-// 	while (++y < ray->draw_start)
-// 	{
-// 		index = y * data->screen_width + x;
-// 		if (data->distance_buffer[index] != 0 && data->distance_buffer[index] < ray->platform_begin_dist)
-// 			continue;
-
-// 		int p = y - horizon;
-		
-// 		float rowDistance = camZ / abs(p); // Conserve pour placer le point
-		
-// 		// Position du point au sol
-// 		float floorX = data->player.position.x + rowDistance * rayDirX;
-// 		float floorY = data->player.position.y + rowDistance * rayDirY;
-		
-// 		// Distance réelle au point
-		
-// 		int cellX = (int)floorX;
-// 		int cellY = (int)floorY;
-		
-// 		int tx = (int)(data->floor.width * (floorX - cellX)) & (data->floor.width - 1);
-// 		int ty = (int)(data->floor.height * (floorY - cellY)) & (data->floor.height - 1);
-// 		color =  data->floor.addr[data->floor.width * ty + tx];
-// 		data->color_buffer[index] = color;
-// 		float dist = ray->platform_begin_dist - i * dist_step;
-// 		i++;
-// 		data->distance_buffer[index] = dist;
-// 		// if (y == data->screen_half_height && x == data->screen_half_width)
-// 		// 	printf("floor dist: %f, platform_begin_dist: %f\n", data->distance_buffer[index], ray->platform_begin_dist);
-// 		// if (y == data->screen_half_height || x == data->screen_half_width)
-// 		// 	color = 0xff0000;
-// 	}
-// }
-
-static void	draw_floor(t_data *data, t_ray *ray, int x)
+void	draw_floor(t_data *data, t_ray *ray, int x)
 {
 	int				y;
 	int				index;
@@ -181,8 +139,9 @@ static void	draw_floor(t_data *data, t_ray *ray, int x)
 	y = ray->platform_start - 1;
 	while (++y < ray->draw_start)
 	{
-		
 		int p = y - horizon;
+		if (p == 0)
+			continue;
 		rowDistance = camZ / abs(p);
 		index = y * data->screen_width + x;
 		if (data->distance_buffer[index] != 0 && data->distance_buffer[index] < rowDistance)
@@ -214,8 +173,8 @@ static void	draw_wall(t_data *data, t_img *wall, t_ray *ray, int x)
 
 	int	index;
 	y = ray->draw_start - 1;
-	if (y < ray->draw_end)
-		calculate_wall_texture(data, ray, &data->player);
+	if (y + 1 < ray->draw_end)
+		calculate_wall_texture(data, ray);
 
 	while (++y < ray->draw_end)
 	{

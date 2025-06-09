@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/24 22:25:10 by injah             #+#    #+#             */
-/*   Updated: 2025/06/04 21:47:08 by injah            ###   ########.fr       */
+/*   Updated: 2025/06/06 12:40:17 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ static void init_game(t_data *data)
 	data->hotkeys.key_q = false;
 	data->hotkeys.key_d = false;
 	data->hotkeys.key_s = false;
+	data->hotkeys.key_t = false;
 	data->hotkeys.mouse_x = 0.0;
 	data->hotkeys.mouse_y = 0.0;
 	data->screen_width = 1440;

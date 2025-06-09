@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 08:36:06 by injah             #+#    #+#             */
-/*   Updated: 2025/06/03 21:56:37 by injah            ###   ########.fr       */
+/*   Updated: 2025/06/06 11:33:23 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ int keypress(int key, t_data *data)
 		data->hotkeys.key_s = true;
 	else if (key == 'w')
 		data->hotkeys.key_w = true;
+	else if (key == 't')
+		data->hotkeys.key_t = true;
 	else if (key == SPACE)
 	{
 		if (data->player.state != FALLING)
@@ -72,6 +74,8 @@ int keyrelease(int key, t_data *data)
 		data->hotkeys.key_s = false;
 	else if (key == 'w')
 		data->hotkeys.key_w = false;
+	else if (key == 't')
+		data->hotkeys.key_t = false;
 	else if (key == L_CTRL)
 	{
 		data->player.move_speed = 1;
@@ -86,13 +90,19 @@ int	mouse_move(int x, int y, t_data *data)
 {
 	static int	last_x = 0;
 	static int	last_y = 0;
-
-	if (abs(last_x - x) < 100)
-		data->hotkeys.mouse_x = (float)(x - last_x);
-	if (abs(last_y - y) < 100)
-		data->hotkeys.mouse_y = (float)(y - last_y);
-	last_x = x;
-	last_y = y;
+	if (data->hotkeys.key_t == true)
+	{
+		printf("x: %d, y: %d, color: %x, wall_dist: %f\n", x, y, data->color_buffer[y * data->screen_width + x], data->distance_buffer[y * data->screen_width + x]);
+	}
+	else
+	{
+		if (abs(last_x - x) < 100)
+			data->hotkeys.mouse_x = (float)(x - last_x);
+		if (abs(last_y - y) < 100)
+			data->hotkeys.mouse_y = (float)(y - last_y);
+		last_x = x;
+		last_y = y;
+	}
 	return (0);
 }
 
